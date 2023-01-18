@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vue Basics</title>
+
+<style>
+    .box {
+        background-color: purple;
+        height: 200px;
+        width: 200px;
+    }
+
+    [v-cloak] {
+        display: none;
+    }
+</style>
+
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        {{ greeting }}
+        <input v-model="greeting" />
+        <input @keyup.enter="greet(greeting + '!!!')" v-model = "greeting" />
+        <hr />
+        <div v-if="isVisible" class="box"></div>
+        <div v-else-if="isVisible2" class="box"></div>
+        <div v-else class="box"></div>
+
+        <div v-show="isVisible" class="box"></div>
+
+
+<button v-on:click="isVisible = !isVisible">show box</button>
+<button @click.right="isVisible = !isVisible">show box</button>
+<button @click.prevent.stop="togglebox">show box</button>
+
+
+    </div>
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+<script>
+    let app = Vue.createApp({
+        data: function() {
+            return{
+            greeting: 'Hello Vue!',
+            isVisible: true,
+            isVisible2: true
+            }
+        },
+        methods: {
+            togglebox() {
+                this.isVisible = !this.isVisible
+            },
+            greet(greeting) {
+                console.log(greeting)
+            
+            }
+        }
+        
+
+
+    })
+    app.mount('#app')
+</script>
+
+
+
+</body>
+
+
+</html>

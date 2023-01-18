@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vue Basics</title>
+
+<style>
+    .box {
+        background-color: purple;
+        height: 200px;
+        width: 200px;
+    }
+
+    [v-cloak] {
+        display: none;
+    }
+
+    input {
+        margin: 10px;
+        display: block;
+    }
+</style>
+
+</head>
+
+<body>
+    <div id="app" v-cloak>
+       <login-form />
+
+
+    </div>
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+<script>
+    let app = Vue.createApp({
+        data: function() {
+            return{
+            greeting: 'Hello Vue!',
+            isVisible: true,
+            isVisible2: true
+            }
+        },
+        methods: {
+            togglebox() {
+                this.isVisible = !this.isVisible
+            },
+            greet(greeting) {
+                console.log(greeting)
+            
+            }
+        }
+        
+
+
+    })
+    app.component('login-form', {
+
+        template: `
+        <form @submit.prevent="handleSubmit">
+            <h1> {{ title }} </h1>
+            <p v-for="str in inputs" :key="str"> {{str}} </p>
+
+           <custom-input
+           v-for="(input, i) in inps"
+           :key="i"
+           v-model="input.value" 
+           :label="input.label"
+           :type="input.type"
+           />
+
+        //    <custom-input v-model="password" v-bind:label="passwordLabel" />
+            <button>Log in</button>
+        </form>
+        `,
+        components: ['custom-input'],
+        data() {
+            return {
+                title: 'Login Form',
+                inputs: [
+                    'email',
+                    'password',
+                    'name'
+                ],
+                inps: [
+                    {
+                        label: 'Email',
+                        value: '',
+                        type: 'email'
+                    },
+                    {
+                        label: 'Password',
+                        value: '',
+                        type: 'password'
+                    }
+                ],
+                email: '',
+                password: '',
+                emailLabel: "Email",
+                passwordLabel: "Password"
+            }
+        },
+        methods: {
+            handleSubmit() {
+                console.log(this.email, this.password)
+                console.log(this.inps[0].value, this.inps[1].value)
+            }
+        }
+    })
+    app.component('custom-input',{
+        template: `
+        <label>
+            {{label}}
+            <input :type="type" v-model="inputValue">
+            </label>
+        `,
+        props: ['label','type', 'modelValue'],
+        computed: {
+            inputValue:{
+                get(){
+                    return this.modelValue
+                },
+                set(value){
+                    console.log(value)
+                    this.$emit('update:modelValue', value)
+                }
+
+            }
+        },
+        data(){
+            return{
+                inputValue: ''
+
+            }
+        }
+
+
+
+
+    })
+    app.mount('#app')
+</script>
+
+
+
+</body>
+
+
+</html>
