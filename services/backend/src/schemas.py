@@ -3,18 +3,23 @@ from datetime import datetime
 class MessageBase(BaseModel):
     text: str
     sender_id: str 
+    sender_user: str
 
 
 
 
 class MessageCreate(MessageBase):
+    text: str
+    sender_id: str 
+    sender_user: str
     pass
 
 
 class Message(MessageBase):
     id: int
     created_at: datetime
-    sender_user: str
+
+
 
 
     class Config:

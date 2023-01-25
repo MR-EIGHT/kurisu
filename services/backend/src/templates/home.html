@@ -9,6 +9,22 @@
 
 
 
+<style scoped>
+    .chat-box {
+      width: 100%;
+      display: flex;
+      margin-top: 18px;
+    }
+    
+    input {
+      width: min(100%, 20rem);
+      flex-grow: 1;
+    }
+    
+    button:disabled {
+      opacity: 0.5;
+    }
+    </style>
 
 
 <style scoped>
@@ -41,8 +57,11 @@
 
 
 <body>
+
     <div id="vu">
         <message v-for="str in messages" :key="str" :text="str.text" :author="str.sender_user" :sent="str.created_at"> [[str]] </message>
+        <chat-box> </chat-box>
+   
     </div>
 
 
@@ -50,6 +69,7 @@
 
 
     <script>
+        
        let vu = Vue.createApp({
             
             data: function() {
@@ -69,7 +89,8 @@
                             this.messages = response.data
                             console.log(this.messages)
                         });
-                }
+                },
+
             },
             mounted(){
               this.getMessages();
@@ -98,6 +119,60 @@
 
 
     })
+
+
+
+    vu.component('ChatBox',{
+        template: `
+        <form class='chat-box' @submit='onSubmit($event)'>
+    <input
+        v-model='text'
+        placeholder='Write a message'
+        type='text'
+    />
+    <button :disabled='text === ""'>Send</button>
+  </form>
+        `,
+        data: () => ({
+
+// To keep the state of the input content
+text: '',
+user:'d',
+id: 10
+}),
+methods: {
+
+// We will call this when the form is submitted
+onSubmit(event) {
+
+  // This fires an event which we will handle
+  // in the parent component
+  this.$emit("submit", event, this.text);
+
+//   axios.get("/whoami", {
+//            responseType: "json",
+//        })
+//        .then(response => {
+//            this.user = response.data
+//            console.log(this.user)
+//        });
+
+  axios.post("/users/"+this.id+"/messages/", {
+  "text": this.text,
+  "sender_id": this.id,
+  "sender_user": this.user
+})
+  this.text = '';
+}
+},
+  delimiters: ['[[',']]']
+
+
+    })
+
+
+
+
 
 
         vu.mount('#vu')
