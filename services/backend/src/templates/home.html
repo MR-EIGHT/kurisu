@@ -7,6 +7,66 @@
 </head>
 
 
+<style>
+    @font-face {
+      font-family: 'Georama';
+      src: url('./assets/Georama.ttf');
+    }
+    
+    @font-face {
+      font-family: 'Georama';
+      src: url('./assets/Georama.ttf');
+      font-weight: bold;
+    }
+    
+    * {
+      box-sizing: border-box;
+    }
+    
+    html {
+      font-family: 'Georama', sans-serif;
+    }
+    
+    body {
+      margin: 0;
+    }
+    
+    button {
+      border: 0;
+      background: #2a60ff;
+      color: white;
+      cursor: pointer;
+      padding: 1rem;
+    }
+    
+    input {
+      border: 0;
+      padding: 1rem;
+      background: rgba(0, 0, 0, 0.1);
+    }
+    </style>
+    
+    <style scoped>
+    .app {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .messages {
+      flex-grow: 1;
+      overflow: auto;
+      padding: 1rem;
+    }
+    
+    .message + .message {
+      margin-top: 1rem;
+    }
+    
+    .message.right {
+      margin-left: auto;
+    }
+    </style>
 
 
 <style scoped>
@@ -37,8 +97,10 @@
     }
     
     .message.dark {
-      background: #e9eaf6;
+      background: #9399de;
     }
+
+ 
     
     h5 {
       margin: 0 0 .5rem 0;
@@ -59,7 +121,7 @@
 <body>
 
     <div id="vu">
-        <message v-for="str in messages" :key="str" :text="str.text" :author="str.sender_user" :sent="str.created_at"> [[str]] </message>
+        <message v-for="str in messages" :key="str" :text="str.text" :author="str.sender_user" :sent="str.created_at" :dark="str.sender_user == 'd'" :class="['message', { right: str.sender_user == 'd' }]"> [[str]] </message>
         <chat-box> </chat-box>
    
     </div>
@@ -108,6 +170,10 @@
      [[text]] 
      <h6> [[sent]] </h6>
     </div>
+
+
+
+
         `,
   props: [
     'text', // Content of the message
