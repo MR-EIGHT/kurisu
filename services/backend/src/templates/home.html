@@ -4,15 +4,37 @@
 <title></title>
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-
 </head>
+
+
+
+
+
+
+<style scoped>
+    .message {
+      background: #e7e7e7;
+      border-radius: 10px;
+      padding: 1rem;
+      width: fit-content;
+      margin-top: 8px;
+    }
+    
+    .message.dark {
+      background: #e9eaf6;
+    }
+    
+    h5 {
+      margin: 0 0 .5rem 0;
+    }
+    </style>
+
 
 
 <body>
     <div id="vu">
-        <p v-for="str in messages" :key="str"> [[str]] </p>
+        <message v-for="str in messages" :key="str" :text="str.text" :author="str.sender_id" :sent="str.created_at"> [[str]] </message>
     </div>
-
 
 
 
@@ -36,6 +58,7 @@
                         })
                         .then(response => {
                             this.messages = response.data
+                            console.log(this.messages)
                         });
                 }
             },
@@ -46,13 +69,28 @@
         })
 
 
+        vu.component('Message',{
+        template: `
+        <div
+        :class='["message", { dark }]'
+    >
+      <h5>[[author]] </h5>
+     [[text]] <br> 
+     <h6> [[sent]] </h6>
+    </div>
+        `,
+  props: [
+    'text', // Content of the message
+    'author', // Author of the message
+    'sent',
+    'dark' // Background variant of the box
+  ],
+  delimiters: ['[[',']]']
 
+
+    })
 
 
         vu.mount('#vu')
 
-
-    </script>
-</body>
-
-</html>
+</script>
