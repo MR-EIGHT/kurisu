@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+<title></title>
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+</head>
+
+
+<body>
+    <div id="vu">
+        <p v-for="str in messages" :key="str"> [[str]] </p>
+    </div>
+
+
+
+
+
+
+    <script>
+       let vu = Vue.createApp({
+            
+            data: function() {
+                return{
+                messages: null,
+                ali: '245'
+            }
+                
+            },
+            methods: {
+                getMessages() {
+                     return axios
+                        .get("/messages", {
+                            responseType: "json",
+                        })
+                        .then(response => {
+                            this.messages = response.data
+                        });
+                }
+            },
+            mounted(){
+              this.getMessages();
+            },
+            delimiters: ['[[',']]']
+        })
+
+
+
+
+
+        vu.mount('#vu')
+
+
+    </script>
+</body>
+
+</html>

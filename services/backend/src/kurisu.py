@@ -1,8 +1,13 @@
 from fastapi import Depends, FastAPI, HTTPException
+from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, Request
 from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
 import crud, models, schemas
 from database import SessionLocal, engine
+from fastapi.templating import Jinja2Templates
+
+templates = Jinja2Templates(directory="templates") 
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -29,6 +34,10 @@ def get_db():
         db.close()
 
 
+
+@app.get("/", response_class=HTMLResponse)
+async def serve_home(request: Request):
+    return templates.TemplateResponse("home.html", {"request": request})
 
 
 
