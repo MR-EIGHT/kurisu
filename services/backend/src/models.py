@@ -20,6 +20,7 @@ class Message(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     text = Column(String, index=True)
+    sender_user = Column(String, index=True)
     sender_id = Column(Integer, ForeignKey("users.id"))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     owner = relationship("User", back_populates="messages")

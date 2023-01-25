@@ -26,14 +26,23 @@
     
     h5 {
       margin: 0 0 .5rem 0;
+      color:darkblue;
     }
+
+    h6 {
+      margin-top: 10px;
+      margin-bottom: 1px;
+      color: blueviolet;
+      left: auto;
+    }
+
     </style>
 
 
 
 <body>
     <div id="vu">
-        <message v-for="str in messages" :key="str" :text="str.text" :author="str.sender_id" :sent="str.created_at"> [[str]] </message>
+        <message v-for="str in messages" :key="str" :text="str.text" :author="str.sender_user" :sent="str.created_at"> [[str]] </message>
     </div>
 
 
@@ -75,7 +84,7 @@
         :class='["message", { dark }]'
     >
       <h5>[[author]] </h5>
-     [[text]] <br> 
+     [[text]] 
      <h6> [[sent]] </h6>
     </div>
         `,

@@ -5,6 +5,8 @@ class MessageBase(BaseModel):
     sender_id: str 
 
 
+
+
 class MessageCreate(MessageBase):
     pass
 
@@ -12,6 +14,7 @@ class MessageCreate(MessageBase):
 class Message(MessageBase):
     id: int
     created_at: datetime
+    sender_user: str
 
 
     class Config:
