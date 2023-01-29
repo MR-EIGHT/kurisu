@@ -1,24 +1,15 @@
 <!DOCTYPE html>
 <html>
-    <head>
+<head>
 <title>Kurisu Chat</title>
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-</head>
-
-
-
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-
-
-
-
-
-
+</head>
 
 <style>
     @font-face {
@@ -183,8 +174,8 @@ dialog::backdrop {
 
       <p> [[user]] </p>
       <div id="chatbox-id" style="border: 2px solid black; width:100vw; height:85vh; overflow-y:scroll;">
-    
-        <message v-for="str in messages" :key="str" :text="str.text" :author="str.sender_user" :sent="str.created_at" :dark="str.sender_user == user" :class="['message', { right: str.sender_user == user }]"> [[str]] </message>
+
+        <message v-for="str in messages" :key="str.id" :text="str.text" :author="str.sender_user" :sent="str.created_at" :dark="str.sender_user == user" :class="['message', { right: str.sender_user == user }]"> [[str]] </message>
       </div>
         <chat-box> </chat-box>
    
@@ -200,7 +191,6 @@ dialog::backdrop {
             data: function() {
                 return{
                 messages: null,
-                ali: '245',
                 got_user: false,
                 user: ''
             }
@@ -218,7 +208,6 @@ dialog::backdrop {
               scroll_down(){
                 var ob = document.getElementById("chatbox-id");
                 ob.scrollTop = ob.scrollHeight;
-                console.log("hey")
               },
                 getMessages() {
                      return axios
@@ -245,11 +234,11 @@ dialog::backdrop {
         template: `
         <div
         :class='["message", { dark }]'
-    >
-      <h5>[[author]] </h5>
-     [[text]] 
-     <h6> [[sent]] </h6>
-    </div>
+        >
+        <h5>[[author]] </h5>
+        [[text]] 
+        <h6> [[sent]] </h6>
+        </div>
 
 
 
@@ -281,27 +270,17 @@ dialog::backdrop {
         `,
         data: () => ({
 
-// To keep the state of the input content
+
 text: '',
 user:'d',
 id: 0
 }),
+
 methods: {
 
-// We will call this when the form is submitted
 onSubmit(event) {
 
-  // This fires an event which we will handle
-  // in the parent component
   this.$emit("submit", event, this.text);
-
-//   axios.get("/whoami", {
-//            responseType: "json",
-//        })
-//        .then(response => {
-//            this.user = response.data
-//            console.log(this.user)
-//        });
 
   user = this.$parent.user;
   axios.get("/users/"+ this.$parent.user , {responseType: "json",}).then(response => { this.id = response.data.id});
