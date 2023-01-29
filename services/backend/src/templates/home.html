@@ -11,6 +11,9 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
 
+
+
+
 <style>
     @font-face {
       font-family: 'Georama';
@@ -172,9 +175,8 @@ dialog::backdrop {
             </div>
         </dialog>
 
-      <p> [[user]] </p>
       <div id="chatbox-id" style="border: 2px solid black; width:100vw; height:85vh; overflow-y:scroll;">
-
+        
         <message v-for="str in messages" :key="str.id" :text="str.text" :author="str.sender_user" :sent="str.created_at" :dark="str.sender_user == user" :class="['message', { right: str.sender_user == user }]"> [[str]] </message>
       </div>
         <chat-box> </chat-box>
@@ -197,18 +199,36 @@ dialog::backdrop {
 
           },
             methods: {
+              scroll_down(){
+                let ob = document.getElementById("chatbox-id");
+                ob.scrollTop = ob.scrollHeight;
+                
+              },
+
+              set_username(){
+                  if (localStorage.getItem('username') != null){
+                    this.user = localStorage.getItem('username')
+                    this.close_dialog()
+                  }else{
+                    this.show_dialog()
+                  }
+
+              },
+
               show_dialog() {
                 const showB = document.getElementById('user_dialog');
                 showB.showModal();
               },
               close_dialog() {
+                localStorage.setItem('username', this.user)
                 document.getElementById('user_dialog').remove();
+                axios.post("/users", {
+                            "username": this.user,
+                            "password": 'fake-password'
+                          })
                 
               },
-              scroll_down(){
-                var ob = document.getElementById("chatbox-id");
-                ob.scrollTop = ob.scrollHeight;
-              },
+          
                 getMessages() {
                      return axios
                         .get("/messages", {
@@ -222,9 +242,10 @@ dialog::backdrop {
 
             },
             mounted(){
-              this.show_dialog();
+              this.scroll_down()
+              this.set_username();
               this.getMessages();
-              this.scroll_down();
+
             },
             delimiters: ['[[',']]']
         })
@@ -235,7 +256,7 @@ dialog::backdrop {
         <div
         :class='["message", { dark }]'
         >
-        <h5>[[author]] </h5>
+        <h5><strong>[[author]]</strong> </h5>
         [[text]] 
         <h6> [[sent]] </h6>
         </div>
@@ -259,6 +280,7 @@ dialog::backdrop {
 
     vu.component('ChatBox',{
         template: `
+        
         <form class='chat-box' @submit='onSubmit($event)'>
     <input
         v-model='text'
@@ -272,7 +294,7 @@ dialog::backdrop {
 
 
 text: '',
-user:'d',
+user:'',
 id: 0
 }),
 
@@ -282,8 +304,8 @@ onSubmit(event) {
 
   this.$emit("submit", event, this.text);
 
-  user = this.$parent.user;
-  axios.get("/users/"+ this.$parent.user , {responseType: "json",}).then(response => { this.id = response.data.id});
+  this.user = this.$parent.user;
+  axios.get("/user" ,{"user_name":this.$parent.user}, {responseType: "json",}).then(response => { this.id = response.data.id});
 
 
 
@@ -293,6 +315,10 @@ onSubmit(event) {
   "sender_user": this.user
 })
   this.text = '';
+
+                let ob = document.getElementById("chatbox-id");
+                console.log(ob.innerHTML)
+                ob.scrollTop = ob.scrollHeight;
 }
 },
   delimiters: ['[[',']]']
