@@ -175,7 +175,7 @@ dialog::backdrop {
             </div>
         </dialog>
 
-      <div id="chatbox-id" style="border: 2px solid black; width:100vw; height:85vh; overflow-y:scroll;">
+      <div id="chatbox-id" style="border: 2px solid black; width:100vw; height:85vh; overflow-y:scroll; scroll-behavior: smooth;">
         
         <message v-for="str in messages" :key="str.id" :text="str.text" :author="str.sender_user" :sent="str.created_at" :dark="str.sender_user == user" :class="['message', { right: str.sender_user == user }]"> [[str]] </message>
       </div>
@@ -194,11 +194,23 @@ dialog::backdrop {
                 return{
                 messages: null,
                 got_user: false,
-                user: ''
+                user: '',
+                timer: ''
             }
 
           },
+          created () {
+        this.timer = setInterval(this.getMessages, 3000);
+    },
+    
             methods: {
+              cancelAutoUpdate () {
+            clearInterval(this.timer);
+        },
+        beforeUnmount () {
+      this.cancelAutoUpdate();
+    },
+              
               scroll_down(){
                 let ob = document.getElementById("chatbox-id");
                 ob.scrollTop = ob.scrollHeight;
@@ -238,11 +250,12 @@ dialog::backdrop {
                             this.messages = response.data
                             console.log(this.messages)
                         });
+                        
                 },
 
             },
             mounted(){
-              this.scroll_down()
+              this.scroll_down();
               this.set_username();
               this.getMessages();
 
