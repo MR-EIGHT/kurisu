@@ -1,10 +1,23 @@
 <!DOCTYPE html>
 <html>
     <head>
-<title></title>
+<title>Kurisu Chat</title>
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </head>
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+
+
+
+
 
 
 <style>
@@ -66,6 +79,7 @@
     .message.right {
       margin-left: auto;
     }
+    
     </style>
 
 
@@ -114,18 +128,67 @@
       left: auto;
     }
 
+
+    .center {
+      text-align: center;
+      width: 50%width;
+       height: 20%widdth;
+       margin:0 auto;
+       display:table;
+       position: absolute;
+       left: 0;
+       right:0;
+       top: 50%; 
+       border:1px solid;
+       -webkit-transform:translateY(-50%);
+       -moz-transform:translateY(-50%);
+       -ms-transform:translateY(-50%);
+       -o-transform:translateY(-50%);
+       transform:translateY(-50%);
+
+
+
+      background-color: rgba(255, 255, 255, 0.4);
+      -webkit-backdrop-filter: blur(5px);
+      backdrop-filter: blur(5px);
+      padding: 20px;
+      margin: 30px;
+      font-weight: bold;
+}
+
+
+dialog::backdrop {
+  background: rgba(21, 146, 236, 0.25);
+}
+
+
     </style>
+
 
 
 
 <body>
 
+
     <div id="vu">
-        <message v-for="str in messages" :key="str" :text="str.text" :author="str.sender_user" :sent="str.created_at" :dark="str.sender_user == 'd'" :class="['message', { right: str.sender_user == 'd' }]"> [[str]] </message>
+
+        <dialog class="center" id="user_dialog" style="margin: 0 auto; background-color: white;" > 
+            <div   v-if="!got_user">
+              <h3 style="color:#2a60ff; background-color:azure">Enter your username:</h3>
+                <input placeholder="username" style="margin-top: 10px; margin-bottom: 10px;" v-model="user" type="text">
+                <button class="clo" @click="got_user = !got_user; close_dialog();">Enter</button>
+      
+            </div>
+        </dialog>
+
+      <p> [[user]] </p>
+      <div id="chatbox-id" style="border: 2px solid black; width:100vw; height:85vh; overflow-y:scroll;">
+    
+        <message v-for="str in messages" :key="str" :text="str.text" :author="str.sender_user" :sent="str.created_at" :dark="str.sender_user == user" :class="['message', { right: str.sender_user == user }]"> [[str]] </message>
+      </div>
         <chat-box> </chat-box>
    
     </div>
-
 
 
 
@@ -137,11 +200,26 @@
             data: function() {
                 return{
                 messages: null,
-                ali: '245'
+                ali: '245',
+                got_user: false,
+                user: ''
             }
-                
-            },
+
+          },
             methods: {
+              show_dialog() {
+                const showB = document.getElementById('user_dialog');
+                showB.showModal();
+              },
+              close_dialog() {
+                document.getElementById('user_dialog').remove();
+                
+              },
+              scroll_down(){
+                var ob = document.getElementById("chatbox-id");
+                ob.scrollTop = ob.scrollHeight;
+                console.log("hey")
+              },
                 getMessages() {
                      return axios
                         .get("/messages", {
@@ -155,7 +233,9 @@
 
             },
             mounted(){
+              this.show_dialog();
               this.getMessages();
+              this.scroll_down();
             },
             delimiters: ['[[',']]']
         })
@@ -204,7 +284,7 @@
 // To keep the state of the input content
 text: '',
 user:'d',
-id: 10
+id: 0
 }),
 methods: {
 
@@ -223,6 +303,11 @@ onSubmit(event) {
 //            console.log(this.user)
 //        });
 
+  user = this.$parent.user;
+  axios.get("/users/"+ this.$parent.user , {responseType: "json",}).then(response => { this.id = response.data.id});
+
+
+
   axios.post("/users/"+this.id+"/messages/", {
   "text": this.text,
   "sender_id": this.id,
@@ -233,13 +318,7 @@ onSubmit(event) {
 },
   delimiters: ['[[',']]']
 
-
     })
-
-
-
-
-
 
         vu.mount('#vu')
 
