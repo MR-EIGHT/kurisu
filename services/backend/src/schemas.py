@@ -1,5 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
+
+
 class MessageBase(BaseModel):
     text: str
     sender_id: str 
@@ -31,14 +33,16 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
-    password: str
+   password: str
+   pass
 
 
 
 class User(UserBase):
     id: int
+    username: str
     is_active: bool
     items: list[Message] = []
 
     class Config:
-        orm_mode = True
+        orm_mode = True 
